@@ -11,10 +11,6 @@ git:
 branches:
   only:
     - master
-# send notifications to stack as well as email
-notifications:
-  slack: getmangos:yRgNBSgRQVh8WdfGEbT08Hit
-
 # build on both Linux and OSX
 os:
   - linux
@@ -44,3 +40,13 @@ script:
   - cd _build
   - cmake .. -DCMAKE_INSTALL_PREFIX=../_install -DSOAP=1 -DPLAYERBOTS=1
   - make -j4
+
+# Dispatch notification to Discord
+after_success:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
